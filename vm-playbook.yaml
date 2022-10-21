@@ -7,15 +7,15 @@
     ansible.builtin.get_url:
       url: https://raw.githubusercontent.com/{{ awx_webhook_payload.repository.full_name }}/main/virtual-machine.yaml
       dest: virtual-machine.yaml
-    register: virtual-machine     
+    register: virtual_machine     
 
   - name: Create a Virtual Machine
     kubernetes.core.k8s:
       state: present
-      name: "{{ virtual-machine.output.name }}"
+      name: "{{ virtual_machine.output.name }}"
       host: "https://kubernetes.default.svc:443"
       api_key: "{{ lookup('file', '/var/run/secrets/kubernetes.io/serviceaccount/token') }}"
-      namespace: "{{ virtual-machine.output.namespace }}"
+      namespace: "{{ virtual_machine.output.namespace }}"
       validate_certs: false
       definition:
         apiVersion: kubevirt.io/v1
