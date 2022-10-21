@@ -3,13 +3,19 @@
   hosts: localhost
 
   tasks:
+  - name: Pull file out of Git
+    ansible.builtin.get_url:
+      url: https://raw.githubusercontent.com/{{ awx_webhook_payload.project.path_with_namespace }}/main/virtual-machine.yaml
+      dest: virtual-machine.yaml
+    register: virtual-machine     
+
   - name: Create a Virtual Machine
     kubernetes.core.k8s:
       state: present
-      name: "{{ NAME }}"
+      name: "{{ virtual-machine.output.name }}"
       host: "https://kubernetes.default.svc:443"
       api_key: "{{ lookup('file', '/var/run/secrets/kubernetes.io/serviceaccount/token') }}"
-      namespace: "{{ NAMESPACE }}"
+      namespace: "{{ virtual-machine.output.namespace }}"
       validate_certs: false
       definition:
         apiVersion: kubevirt.io/v1
