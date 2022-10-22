@@ -8,6 +8,10 @@
       url: https://raw.githubusercontent.com/{{ awx_webhook_payload.repository.full_name }}/main/virtual-machine.yaml
     register: virtual_machine     
 
+  - name: Print the gateway for each host when defined
+    ansible.builtin.debug:
+      msg: virtual_machine.content {{ virtual_machine.content }} and virtual_machine.content | from_yaml {{ virtual_machine.content | from_yaml }}    
+
   - name: Create a Virtual Machine
     kubernetes.core.k8s:
       state: present
