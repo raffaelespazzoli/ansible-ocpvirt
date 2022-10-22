@@ -11,10 +11,10 @@
   - name: Create a Virtual Machine
     kubernetes.core.k8s:
       state: present
-      name: "{{ virtual_machine.output.name }}"
+      name: "{{ virtual_machine.content | from_yaml | .name }}"
       host: "https://kubernetes.default.svc:443"
       api_key: "{{ lookup('file', '/var/run/secrets/kubernetes.io/serviceaccount/token') }}"
-      namespace: "{{ virtual_machine.output.namespace }}"
+      namespace: "{{ virtual_machine.content | from_yaml | .namespace }}"
       validate_certs: false
       definition:
         apiVersion: kubevirt.io/v1
