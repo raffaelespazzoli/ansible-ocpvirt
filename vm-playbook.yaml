@@ -4,9 +4,8 @@
 
   tasks:
   - name: Pull file out of Git
-    ansible.builtin.get_url:
+    ansible.builtin.uri:
       url: https://raw.githubusercontent.com/{{ awx_webhook_payload.repository.full_name }}/main/virtual-machine.yaml
-      dest: virtual-machine.yaml
     register: virtual_machine     
 
   - name: Create a Virtual Machine
