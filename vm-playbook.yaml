@@ -7,19 +7,7 @@
     ansible.builtin.uri:
       url: https://raw.githubusercontent.com/{{ awx_webhook_payload.repository.full_name }}/main/virtual-machine.yaml
       return_content: true
-    register: virtual_machine     
-
-  - name: Print the gateway for each host when defined
-    ansible.builtin.debug:
-      msg: virtual_machine {{ virtual_machine }}  
-
-  - name: Print the gateway for each host when defined
-    ansible.builtin.debug:
-      msg: virtual_machine.content {{ virtual_machine.content }} 
-
-  - name: Print the gateway for each host when defined
-    ansible.builtin.debug:
-      msg: virtual_machine.content | from_yaml {{ virtual_machine.content | from_yaml }}       
+    register: virtual_machine      
 
   - name: Create a Virtual Machine
     kubernetes.core.k8s:
@@ -46,7 +34,7 @@
               ]
           generation: 1
           labels:
-            app: "{{ NAME }}"
+            app: "{{ (virtual_machine.content | from_yaml).name }}"
             vm.kubevirt.io/template: fedora-server-small
             vm.kubevirt.io/template.namespace: openshift
             vm.kubevirt.io/template.revision: '1'
@@ -57,7 +45,7 @@
               kind: DataVolume
               metadata:
                 creationTimestamp: null
-                name: "{{ NAME }}"
+                name: "{{ (virtual_machine.content | from_yaml).name }}"
               spec:
                 sourceRef:
                   kind: DataSource
@@ -76,7 +64,7 @@
                 vm.kubevirt.io/workload: server
               creationTimestamp: null
               labels:
-                kubevirt.io/domain: "{{ NAME }}"
+                kubevirt.io/domain: "{{ (virtual_machine.content | from_yaml).name }}"
                 kubevirt.io/size: small
             spec:
               domain:
@@ -117,7 +105,7 @@
               terminationGracePeriodSeconds: 180
               volumes:
                 - dataVolume:
-                    name: "{{ NAME }}"
+                    name: "{{ (virtual_machine.content | from_yaml).name }}"
                   name: rootdisk
                 - cloudInitNoCloud:
                     userData: |-
