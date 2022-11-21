@@ -7,6 +7,7 @@
     ansible.builtin.uri:
       url: https://raw.githubusercontent.com/{{ awx_webhook_payload.repository.full_name }}/master/vms/virtual-machine.yaml
       return_content: true
+      force: true
     register: virtual_machine      
 
   - name: Create a Virtual Machine
